@@ -2,11 +2,9 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -69,7 +67,7 @@ func RecipesHandle(w http.ResponseWriter, r *http.Request) {
 	dResp := DeliveryResponse{Keywords: keywords}
 	for _, recipe := range recipeResponse.Results {
 		ingredients := strings.Split(recipe.Ingredients, ",")
-		gif, err := findGif(recipe.Title)
+		gif, err := GetGifURLByTitle(recipe.Title)
 		if err != nil {
 			fmt.Fprintf(w, "Erro ao comunicar-se com api do GIPHY")
 			return
@@ -85,34 +83,4 @@ func RecipesHandle(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(dResp)
-}
-
-func findGif(title string) (string, error) {
-	config, err := getConfiguration()
-	if err != nil {
-		return "", err
-	}
-
-	apiKey := config.apiKey
-	params := fmt.Sprintf("?api_key=%s&q=%s&limit=1", apiKey, title)
-	resp, err := http.Get("api.giphy.com/v1/gifs/search" + params)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	return "", nil
-}
-
-type configuration struct {
-	apiKey string
-}
-
-func getConfiguration() (*configuration, error) {
-	var config configuration
-	file, err := os.Open("configuration/config.development.json")
-	if err != nil {
-		return nil, errors.New("[Error]: não foi possível abrir o arquivo de configuração")
-	}
-	json.NewDecoder(file).Decode(&config)
-	return &config, nil
 }

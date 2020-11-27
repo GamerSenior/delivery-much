@@ -1,0 +1,5 @@
+# Ignorar arquivos gerados pelo VIM
+*.swp
+
+# Ignorar binario
+delivery-much

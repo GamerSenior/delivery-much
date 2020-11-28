@@ -3,3 +3,6 @@
 
 # Ignorar binario
 delivery-much
+
+# Ignorar arquivos gerados pelo VSCODE
+.vscode

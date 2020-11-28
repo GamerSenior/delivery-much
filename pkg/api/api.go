@@ -22,18 +22,24 @@ type RecipeResponse struct {
 	Results []Recipe
 }
 
+// DeliveryRecipe estrutura de retorno da API
+// Contem os dados da receita
 type DeliveryRecipe struct {
-	Title       string
-	Ingredients []string
-	Link        string
-	Gif         string
+	Title       string   `json:"title"`
+	Ingredients []string `json:"ingredients"`
+	Link        string   `json:"link"`
+	GIF         string   `json:"gif`
 }
 
+// DeliveryResponse estrutura base de retorno da API
+// Contem palavras chafes utilizadas na busca bem como
+// as receitas encontradas
 type DeliveryResponse struct {
 	Keywords []string
 	Recipes  []DeliveryRecipe
 }
 
+// RecipesHandle - handler function responsável por retornar as receitas
 func RecipesHandle(w http.ResponseWriter, r *http.Request) {
 	keys, ok := r.URL.Query()["i"]
 	if !ok || len(keys[0]) < 1 {
@@ -69,6 +75,7 @@ func RecipesHandle(w http.ResponseWriter, r *http.Request) {
 		ingredients := strings.Split(recipe.Ingredients, ",")
 		gif, err := GetGifURLByTitle(recipe.Title)
 		if err != nil {
+			fmt.Println(err)
 			fmt.Fprintf(w, "Erro ao comunicar-se com api do GIPHY")
 			return
 		}
@@ -76,7 +83,7 @@ func RecipesHandle(w http.ResponseWriter, r *http.Request) {
 			Title:       recipe.Title,
 			Ingredients: ingredients,
 			Link:        recipe.Href,
-			Gif:         gif,
+			GIF:         gif,
 		}
 		dResp.Recipes = append(dResp.Recipes, dRecipe)
 	}

@@ -28,7 +28,7 @@ type DeliveryRecipe struct {
 	Title       string   `json:"title"`
 	Ingredients []string `json:"ingredients"`
 	Link        string   `json:"link"`
-	GIF         string   `json:"gif`
+	GIF         string   `json:"gif"`
 }
 
 // DeliveryResponse estrutura base de retorno da API

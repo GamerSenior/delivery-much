@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sort"
 	"strings"
 )
 
@@ -73,6 +74,7 @@ func RecipesHandle(w http.ResponseWriter, r *http.Request) {
 	dResp := DeliveryResponse{Keywords: keywords}
 	for _, recipe := range recipeResponse.Results {
 		ingredients := strings.Split(recipe.Ingredients, ",")
+		sort.Strings(ingredients)
 		gif, err := GetGifURLByTitle(recipe.Title)
 		if err != nil {
 			fmt.Println(err)

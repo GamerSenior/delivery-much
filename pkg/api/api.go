@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+
+	"github.com/GamerSenior/delivery-much/internal/util"
 )
 
 type Recipe struct {
@@ -74,11 +76,14 @@ func RecipesHandle(w http.ResponseWriter, r *http.Request) {
 	dResp := DeliveryResponse{Keywords: keywords}
 	for _, recipe := range recipeResponse.Results {
 		ingredients := strings.Split(recipe.Ingredients, ",")
+		for i, ingredient := range ingredients {
+			ingredients[i] = strings.TrimSpace(ingredient)
+		}
 		sort.Strings(ingredients)
 		gif, err := GetGifURLByTitle(recipe.Title)
 		if err != nil {
 			fmt.Println(err)
-			fmt.Fprintf(w, "Erro ao comunicar-se com api do GIPHY")
+			util.RespondWithError(w, http.StatusServiceUnavailable, "Erro ao comunicar-se com api do GIPHY")
 			return
 		}
 		dRecipe := DeliveryRecipe{
@@ -90,6 +95,5 @@ func RecipesHandle(w http.ResponseWriter, r *http.Request) {
 		dResp.Recipes = append(dResp.Recipes, dRecipe)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(dResp)
+	util.RespondWithJSON(w, http.StatusOK, dResp)
 }
